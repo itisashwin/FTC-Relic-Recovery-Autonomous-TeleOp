@@ -70,25 +70,25 @@ public class RedBackAuto extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
 
-        //Arm = hardwareMap.servo.get("JewelServo");
-        //Arm.setPosition(ARM_HOME);
+        Arm = hardwareMap.servo.get("JewelServo");
+        Arm.setPosition(ARM_HOME);
 
-       // Motor1 = hardwareMap.dcMotor.get("Motor1");
-        //Motor2 = hardwareMap.dcMotor.get("Motor2");
-        //Motor3 = hardwareMap.dcMotor.get("Motor3");
-        //Motor4 = hardwareMap.dcMotor.get("Motor4");
+        Motor1 = hardwareMap.dcMotor.get("Motor1");
+        Motor2 = hardwareMap.dcMotor.get("Motor2");
+        Motor3 = hardwareMap.dcMotor.get("Motor3");
+        Motor4 = hardwareMap.dcMotor.get("Motor4");
 
         // Set all motors to zero power
-        //Motor1.setPower(0);
-        //Motor2.setPower(0);
-        //Motor3.setPower(0);
-        //Motor4.setPower(0);
+        Motor1.setPower(0);
+        Motor2.setPower(0);
+        Motor3.setPower(0);
+        Motor4.setPower(0);
 
         /* Reference to color sensor object */
         //colorSensor = hardwareMap.get(ColorSensor.class, "sensor_color");
 
         /* Initialize VuMark ID */
-
+/*
         telemetry.addData(">", "before vuMark init");
         sleep(500);
         telemetry.update();
@@ -125,34 +125,35 @@ public class RedBackAuto extends LinearOpMode {
 
         telemetry.addData(">", "Press Play to start");
         telemetry.update();
+        */
         waitForStart();
 
         /*  S h o w  T i m e  */
-        relicTrackables.activate();
+        //relicTrackables.activate();
         while (opModeIsActive()) {
 
-            RelicRecoveryVuMark vuMark = RelicRecoveryVuMark.from(relicTemplate);
+            //RelicRecoveryVuMark vuMark = RelicRecoveryVuMark.from(relicTemplate);
 
             //setMotors(0.5);
             //while (vuMark != RelicRecoveryVuMark.UNKNOWN) {
-            checkVuMark(vuMark);
+            //checkVuMark(vuMark);
             //}
             //while (vuMark == RelicRecoveryVuMark.UNKNOWN) {
             // telemetry.addData("VuMark", "%s visible: Unknown", vuMark);
             // }
 
-                /*Arm.setPosition(ARM_MAX_RANGE);
-                double red = colorSensor.red();
-                double blue = colorSensor.blue();
-                if (blue - red > 0) {
-                    telemetry.addLine("Blue");
+                Arm.setPosition(ARM_MAX_RANGE);
+                //double red = colorSensor.red();
+                //double blue = colorSensor.blue();
+                if (Math.random()*100<50) {
+                    telemetry.addLine("option1");
                     telemetry.update();
                     setMotors(0.8);
                     sleep(500);
                     setMotors(-0.8);
                     sleep(500);
-                } else if (blue - red < 0) {
-                    telemetry.addLine("Red!");
+                } else if (Math.random()*100<=50) {
+                    telemetry.addLine("option2");
                     telemetry.update();
                     setMotors(-0.8);
                     sleep(500);
@@ -161,14 +162,13 @@ public class RedBackAuto extends LinearOpMode {
                 }
                 Arm.setPosition(ARM_HOME);
                 setMotors(1);
-                sleep(2000);*/
-            if (vuMark == RelicRecoveryVuMark.LEFT) {
+                sleep(2000);
+            /*if (vuMark == RelicRecoveryVuMark.LEFT) {
                 //setMotors(0.5);
             } else if (vuMark == RelicRecoveryVuMark.RIGHT) {
                 //setMotors(1);
             } else if (vuMark == RelicRecoveryVuMark.CENTER) {
-                //setMotors(0.25);
+                //setMotors(0.25);*/
             }
         }
     }
-}

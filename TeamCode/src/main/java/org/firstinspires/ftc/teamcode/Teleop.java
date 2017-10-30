@@ -20,6 +20,7 @@ public class Teleop extends LinearOpMode {
     private CRServo LeftServo;
     private CRServo RightServo;
     private ColorSensor colorSensor;
+
     @Override
     public void runOpMode() throws InterruptedException {
 
