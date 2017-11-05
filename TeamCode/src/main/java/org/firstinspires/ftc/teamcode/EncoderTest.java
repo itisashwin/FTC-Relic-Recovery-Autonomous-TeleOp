@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotor.RunMode;
@@ -7,23 +8,26 @@ import com.qualcomm.robotcore.hardware.DcMotor.RunMode;
 /**
  * Created by Shreyas on 10/27/17.
  */
-
+@Autonomous
 public class EncoderTest extends LinearOpMode{
 
-    DcMotor motor1 = null;
-    DcMotor motor2 = null;
+    private DcMotor Winch1;
+    private DcMotor Winch2;
 
     public void driveForward(double distance, double power) {
-        motor1.setMode(RunMode.RESET_ENCODERS);
-        motor2.setMode(RunMode.RESET_ENCODERS);
+        Winch1.setMode(RunMode.RESET_ENCODERS);
+        Winch2.setMode(RunMode.RESET_ENCODERS);
 
-        motor1.setTargetPosition((int) distance);
-        motor2.setTargetPosition((int) distance);
+        Winch1.setTargetPosition(-(int) distance);
+        Winch2.setTargetPosition((int) distance);
 
-        motor1.setMode(RunMode.RUN_TO_POSITION);
-        motor1.setMode(RunMode.RUN_TO_POSITION);
+        Winch1.setMode(RunMode.RUN_TO_POSITION);
+        Winch2.setMode(RunMode.RUN_TO_POSITION);
 
-        while (motor1.isBusy() && motor2.isBusy()) {
+        Winch1.setPower(power);
+        Winch2.setPower(-power);
+
+        while (Winch1.isBusy() && Winch2.isBusy()) {
         }
     }
 
@@ -32,18 +36,10 @@ public class EncoderTest extends LinearOpMode{
 
     @Override
     public void runOpMode() throws InterruptedException {
-        motor1 = hardwareMap.dcMotor.get("Motor1");
-        motor2 = hardwareMap.dcMotor.get("Motor2");
-        motor1.setMode(RunMode.RUN_WITHOUT_ENCODERS);
-        motor1.setMode(RunMode.RUN_USING_ENCODERS);
-        motor1.setMode(RunMode.RUN_TO_POSITION);
-        motor1.setMode(RunMode.RESET_ENCODERS);
+        Winch1 = hardwareMap.dcMotor.get("Winch1");
+        Winch2 = hardwareMap.dcMotor.get("Winch2");
+        driveForward(1000,0.5);
 
-        waitForStart();
-
-        motor1.getCurrentPosition();
-        motor1.setTargetPosition(450);
-        motor1.isBusy();
 
     }
 }

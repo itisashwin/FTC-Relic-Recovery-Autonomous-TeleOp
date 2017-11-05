@@ -24,18 +24,6 @@ public class Teleop extends LinearOpMode {
     private CRServo RightServo;
     private ColorSensor colorSensor;
 
-
-    public void WinchPosition (double position, double power){
-        Winch1.setTargetPosition((int)position);
-        Winch2.setTargetPosition((int)-position);
-        Winch1.setMode(RunMode.RUN_TO_POSITION);
-        Winch2.setMode(RunMode.RUN_TO_POSITION);
-        Winch1.setPower(0.35);
-        Winch2.setPower(-0.35);
-        while (Winch1.isBusy()&& Winch2.isBusy()){
-
-        }
-    }
     @Override
     public void runOpMode() throws InterruptedException {
 
@@ -47,7 +35,9 @@ public class Teleop extends LinearOpMode {
         Winch2 = hardwareMap.dcMotor.get("Winch2");
         RightServo = hardwareMap.crservo.get("RightServo");
         LeftServo = hardwareMap.crservo.get("LeftServo");
-//        colorSensor = hardwareMap.colorSensor.get("sensor_color");
+
+        ///colorSensor = hardwareMap.colorSensor.get("sensor_color");
+
 
 
 
