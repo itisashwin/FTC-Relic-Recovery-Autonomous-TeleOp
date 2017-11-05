@@ -30,7 +30,7 @@ public class Teleop extends LinearOpMode {
         Motor4 = hardwareMap.dcMotor.get("Motor4");
         RightServo = hardwareMap.crservo.get("RightServo");
         LeftServo = hardwareMap.crservo.get("LeftServo");
-        colorSensor = hardwareMap.colorSensor.get("sensor_color");
+        ///colorSensor = hardwareMap.colorSensor.get("sensor_color");
 
 
 
