@@ -1,9 +1,9 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotor.RunMode;
 
 
 /**
@@ -17,10 +17,12 @@ public class TurningTest extends LinearOpMode{
     private DcMotor Motor3;
     private DcMotor Motor4;
 
+    private BNO055IMU imu;
+
 
     public void turnRightAngle(double power, double angle) {
 
-        while (SOMETHING < angle) {
+        while(true) {
             Motor1.setPower(power);
             Motor2.setPower(-power);
             Motor3.setPower(power);

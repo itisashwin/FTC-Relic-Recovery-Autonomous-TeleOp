@@ -3,9 +3,10 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
-import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotor.RunMode;
+import com.qualcomm.robotcore.hardware.Servo;
+
 
 /**
  * Created by Shreyas on 9/30/17.
@@ -22,7 +23,29 @@ public class Teleop extends LinearOpMode {
     private DcMotor Winch2;
     private CRServo LeftServo;
     private CRServo RightServo;
-    private ColorSensor colorSensor;
+    private Servo GlyphGrabber;
+    private Servo RightGrab;
+    private Servo LeftGrab;
+
+    public void MoveLift(double distance, double power) {
+        Winch1.setMode(RunMode.RESET_ENCODERS);
+        Winch2.setMode(RunMode.RESET_ENCODERS);
+
+        Winch1.setTargetPosition(-(int) distance);
+        Winch2.setTargetPosition((int) distance);
+
+        Winch1.setMode(RunMode.RUN_TO_POSITION);
+        Winch2.setMode(RunMode.RUN_TO_POSITION);
+
+        Winch1.setPower(power);
+        Winch2.setPower(power);
+
+        while (Winch1.isBusy() && Winch2.isBusy()) {
+        }
+    }
+
+
+
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -35,6 +58,13 @@ public class Teleop extends LinearOpMode {
         Winch2 = hardwareMap.dcMotor.get("Winch2");
         RightServo = hardwareMap.crservo.get("RightServo");
         LeftServo = hardwareMap.crservo.get("LeftServo");
+        GlyphGrabber = hardwareMap.servo.get("GlyphGrabber");
+        RightGrab = hardwareMap.servo.get("RightGrab");
+        LeftGrab = hardwareMap.servo.get("LeftGrab");
+
+
+
+
 
         ///colorSensor = hardwareMap.colorSensor.get("sensor_color");
 
@@ -62,17 +92,45 @@ public class Teleop extends LinearOpMode {
                 LeftServo.setPower(-0.02);
             }
             if (gamepad1.dpad_up == true){
-                Winch1.setPower(0.5);
-                Winch2.setPower(-0.5);
+//                MoveLift(1000,0.5);
+                Winch1.setPower(0.3);
+                Winch2.setPower(-0.3);
+
             }
             else if (gamepad1.dpad_down == true){
-                Winch1.setPower(-0.5);
-                Winch2.setPower(0.5);
+//                MoveLift(-1000, 0.5);
+                Winch1.setPower(-0.3);
+                Winch2.setPower(0.3);
             }
             else{
-                Winch1.setPower(0);
-                Winch2.setPower(0);
+                Winch1.setPower(0.01);
+                Winch2.setPower(-0.01);
             }
+            if(gamepad1.y == true){
+                if (GlyphGrabber.getPosition() == 0.78 ){
+                    GlyphGrabber.setPosition(0.46);
+                    sleep(300);
+                }
+                else{
+                    GlyphGrabber.setPosition(0.78);
+                    sleep(300);
+                }
+            }
+            if (gamepad1.b == true){
+                if(RightGrab.getPosition() == 0.1){
+                    LeftGrab.setPosition(0.4);
+                    RightGrab.setPosition(0.35);
+                    sleep(300);
+                }
+                else{
+                    RightGrab.setPosition(0.8);
+                    LeftGrab.setPosition(0.9);
+                    sleep(300);
+                }
+            }
+
+
+
 //            telemetry.addData("red", colorSensor.red());
 //            telemetry.addData("blue", colorSensor.blue());
 //            telemetry.addData("green", colorSensor.green());
