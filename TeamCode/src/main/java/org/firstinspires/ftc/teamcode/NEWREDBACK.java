@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 
@@ -52,9 +53,9 @@ public class NEWREDBACK extends LinearOpMode {
     private DcMotor Motor3;
     private DcMotor Motor4;
     private Servo Arm;
-    public final static double ARM_HOME = 0.0;
-    public final static double ARM_MAX_RANGE = 0.50;
-    //private ColorSensor colorSensor;
+    public final static double ARM_HOME = 0.42;
+    public final static double ARM_MAX_RANGE = 0.94;
+    private ColorSensor colorSensor;
     public static final String TAG = "Vuforia VuMark Sample";
 
     OpenGLMatrix lastLocation = null;
@@ -67,8 +68,7 @@ public class NEWREDBACK extends LinearOpMode {
     public void driveForward(double distance, double power) {
         Motor1.setMode(DcMotor.RunMode.RESET_ENCODERS);
         Motor2.setMode(DcMotor.RunMode.RESET_ENCODERS);
-        Motor3.setMode(DcMotor.RunMode.RESET_ENCODERS);
-        Motor4.setMode(DcMotor.RunMode.RESET_ENCODERS);
+
 
         Motor1.setTargetPosition(-(int) distance);
         Motor2.setTargetPosition(-(int) distance);
@@ -106,7 +106,7 @@ public class NEWREDBACK extends LinearOpMode {
         Motor4.setPower(0);
 
         /* Reference to color sensor object */
-        //colorSensor = hardwareMap.get(ColorSensor.class, "sensor_color");
+        colorSensor = hardwareMap.get(ColorSensor.class, "sensor_color");
 
         /*
          * To start up Vuforia, tell it the view that we wish to use for camera monitor (on the RC phone);
@@ -164,7 +164,30 @@ public class NEWREDBACK extends LinearOpMode {
              * UNKNOWN, LEFT, CENTER, and RIGHT. When a VuMark is visible, something other than
              * UNKNOWN will be returned by {@link RelicRecoveryVuMark#from(VuforiaTrackable)}.
              */
-            driveForward(2500, 0.5);
+            Arm.setPosition(ARM_MAX_RANGE);
+            double red = colorSensor.red();
+            double blue = colorSensor.blue();
+            if (blue - red > 0) {
+                telemetry.addLine("BLUE!");
+                telemetry.update();
+                //driveForward(0.8, 0);
+                //sleep(500);
+                //driveForward(0.8, 0);
+                //sleep(500);
+            } else if (blue - red < 0) {
+                telemetry.addLine("RED!");
+                telemetry.update();
+                //setMotors(-0.8);
+                //sleep(500);
+                //setMotors(0.8);
+                //sleep(500);
+            }
+            sleep(2000);
+            Arm.setPosition(ARM_HOME);
+            //setMotors(1);
+            sleep(2000);
+            driveForward(10, 0.5);
+            driveForward(2500, 0.75);
             RelicRecoveryVuMark vuMark = RelicRecoveryVuMark.from(relicTemplate);
             if (vuMark != RelicRecoveryVuMark.UNKNOWN) {
 
