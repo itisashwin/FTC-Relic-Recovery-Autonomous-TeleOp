@@ -11,23 +11,41 @@ import com.qualcomm.robotcore.hardware.DcMotor.RunMode;
 @Autonomous
 public class EncoderTest extends LinearOpMode{
 
-    private DcMotor Winch1;
-    private DcMotor Winch2;
+    private DcMotor Motor1;
+    private DcMotor Motor2;
+    private DcMotor Motor3;
+    private DcMotor Motor4;
 
-    public void driveForward(double distance, double power) {
-        Winch1.setMode(RunMode.RESET_ENCODERS);
-        Winch2.setMode(RunMode.RESET_ENCODERS);
 
-        Winch1.setTargetPosition(-(int) distance);
-        Winch2.setTargetPosition((int) distance);
 
-        Winch1.setMode(RunMode.RUN_TO_POSITION);
-        Winch2.setMode(RunMode.RUN_TO_POSITION);
+    public void driveForward(int seconds, double power) {
+        Motor1.setMode(RunMode.RESET_ENCODERS);
+        Motor2.setMode(RunMode.RESET_ENCODERS);
+        Motor3.setMode(RunMode.RESET_ENCODERS);
+        Motor4.setMode(RunMode.RESET_ENCODERS);
 
-        Winch1.setPower(power);
-        Winch2.setPower(-power);
 
-        while (Winch1.isBusy() && Winch2.isBusy()) {
+
+        Motor1.setMode(RunMode.RUN_USING_ENCODER);
+        Motor2.setMode(RunMode.RUN_USING_ENCODER);
+        Motor3.setMode(RunMode.RUN_USING_ENCODER);
+        Motor4.setMode(RunMode.RUN_USING_ENCODER);
+
+
+        Motor1.setPower(power);
+        Motor2.setPower(power);
+        Motor3.setPower(power);
+        Motor4.setPower(-power);
+
+        sleep(seconds);
+
+        Motor1.setPower(0);
+        Motor2.setPower(0);
+        Motor3.setPower(0);
+        Motor4.setPower(0);
+
+        while (Motor1.isBusy() & Motor2.isBusy()) {
+
         }
     }
 
@@ -36,9 +54,27 @@ public class EncoderTest extends LinearOpMode{
 
     @Override
     public void runOpMode() throws InterruptedException {
-        Winch1 = hardwareMap.dcMotor.get("Winch1");
-        Winch2 = hardwareMap.dcMotor.get("Winch2");
-        driveForward(1000,0.5);
+        Motor1 = hardwareMap.dcMotor.get("Motor1");
+        Motor2 = hardwareMap.dcMotor.get("Motor2");
+        Motor3 = hardwareMap.dcMotor.get("Motor3");
+        Motor4 = hardwareMap.dcMotor.get("Motor4");
+
+        waitForStart();
+        driveForward(600,0.8);
+        sleep(500);
+        driveForward(600,-0.8);
+//        Motor1.setPower(0.7);
+//        Motor2.setPower(0.7);
+//        Motor3.setPower(0.7);
+//        Motor4.setPower(-0.7);
+//        sleep(2000);
+//        Motor1.setPower(0);
+//        Motor2.setPower(0);
+//        Motor3.setPower(0);
+//        Motor4.setPower(0);
+
+
+        stop();
 
 
     }

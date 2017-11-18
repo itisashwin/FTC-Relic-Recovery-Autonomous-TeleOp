@@ -21,11 +21,15 @@ public class Teleop extends LinearOpMode {
     private DcMotor Motor4;
     private DcMotor Winch1;
     private DcMotor Winch2;
+    private DcMotor RelicArm;
     private CRServo LeftServo;
     private CRServo RightServo;
     private Servo GlyphGrabber;
     private Servo RightGrab;
     private Servo LeftGrab;
+    private Servo RelicServo;
+    private Servo JewelServo;
+
 
     public void MoveLift(double distance, double power) {
         Winch1.setMode(RunMode.RESET_ENCODERS);
@@ -56,11 +60,16 @@ public class Teleop extends LinearOpMode {
         Motor4 = hardwareMap.dcMotor.get("Motor4");
         Winch1 = hardwareMap.dcMotor.get("Winch1");
         Winch2 = hardwareMap.dcMotor.get("Winch2");
+        RelicArm = hardwareMap.dcMotor.get("RelicArm");
         RightServo = hardwareMap.crservo.get("RightServo");
         LeftServo = hardwareMap.crservo.get("LeftServo");
         GlyphGrabber = hardwareMap.servo.get("GlyphGrabber");
         RightGrab = hardwareMap.servo.get("RightGrab");
         LeftGrab = hardwareMap.servo.get("LeftGrab");
+        RelicServo = hardwareMap.servo.get("RelicServo");
+        JewelServo = hardwareMap.servo.get("JewelServo");
+
+
 
 
 
@@ -68,7 +77,7 @@ public class Teleop extends LinearOpMode {
 
         ///colorSensor = hardwareMap.colorSensor.get("sensor_color");
 
-
+        JewelServo.setPosition(0.7);
 
 
         waitForStart();
@@ -78,6 +87,26 @@ public class Teleop extends LinearOpMode {
             Motor3.setPower(gamepad1.left_stick_y);
             Motor2.setPower(gamepad1.right_stick_y);
             Motor4.setPower(-gamepad1.right_stick_y);
+            if(gamepad2.dpad_up == true){
+                RelicArm.setPower(0.30);
+            }
+            else if (gamepad2.dpad_down == true){
+                RelicArm.setPower(-0.30);
+            }
+            else{
+                RelicArm.setPower(0);
+            }
+            if(gamepad2.a == true){
+                if(RelicServo.getPosition() == 0.2){
+                    RelicServo.setPosition(0.75);
+                    sleep(400);
+                }
+                else{
+                    RelicServo.setPosition(0.2);
+                    sleep(400);
+                }
+            }
+
 
             if (gamepad1.left_bumper == true){
                 RightServo.setPower(1);

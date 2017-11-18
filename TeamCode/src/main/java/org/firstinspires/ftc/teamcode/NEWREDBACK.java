@@ -1,10 +1,15 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotor.RunMode;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.vuforia.Image;
+import com.vuforia.PIXEL_FORMAT;
 
 import org.firstinspires.ftc.robotcontroller.external.samples.ConceptVuforiaNavigation;
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
@@ -20,6 +25,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackableDefaultListener;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
+
 
 /**
  * Created by Ashwin N on 11/5/2017.
@@ -53,10 +59,12 @@ public class NEWREDBACK extends LinearOpMode {
     private DcMotor Motor3;
     private DcMotor Motor4;
     private Servo Arm;
-    public final static double ARM_HOME = 0.42;
-    public final static double ARM_MAX_RANGE = 0.94;
+    private BNO055IMU imu;
+
+
+
     private ColorSensor colorSensor;
-    public static final String TAG = "Vuforia VuMark Sample";
+
 
     OpenGLMatrix lastLocation = null;
 
@@ -65,39 +73,122 @@ public class NEWREDBACK extends LinearOpMode {
      * localization engine.
      */
     VuforiaLocalizer vuforia;
-    public void driveForward(double distance, double power) {
-        Motor1.setMode(DcMotor.RunMode.RESET_ENCODERS);
-        Motor2.setMode(DcMotor.RunMode.RESET_ENCODERS);
 
+    public void gyroturn(double angle, double power){
 
-        Motor1.setTargetPosition(-(int) distance);
-        Motor2.setTargetPosition(-(int) distance);
-        Motor3.setTargetPosition(-(int) distance);
-        Motor4.setTargetPosition((int) distance);
+        Orientation angles   = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+        double initval = angles.firstAngle;
+        Motor1.setMode(RunMode.RESET_ENCODERS);
+        Motor2.setMode(RunMode.RESET_ENCODERS);
+        Motor3.setMode(RunMode.RESET_ENCODERS);
+        Motor4.setMode(RunMode.RESET_ENCODERS);
 
-        Motor1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        Motor2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        Motor3.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        Motor4.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        Motor1.setMode(RunMode.RUN_USING_ENCODER);
+        Motor2.setMode(RunMode.RUN_USING_ENCODER);
+        Motor3.setMode(RunMode.RUN_USING_ENCODER);
+        Motor4.setMode(RunMode.RUN_USING_ENCODER);
 
-        Motor1.setPower(-power);
+        Motor1.setPower(power);
         Motor2.setPower(-power);
-        Motor3.setPower(-power);
+        Motor3.setPower(power);
         Motor4.setPower(power);
+        if (angle > 0) {
+            while ((angles.firstAngle - initval) < angle) {
+                angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+            }
+        }
+        else{
+            while((angles.firstAngle - initval) > angle){
+                angles   = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+            }
+        }
+        Motor1.setPower(0);
+        Motor2.setPower(0);
+        Motor3.setPower(0);
+        Motor4.setPower(0);
 
-        while (Motor1.isBusy() && Motor2.isBusy() && Motor3.isBusy() && Motor4.isBusy()) {
+    }
+    public void driveForward(int miliseconds, double power) {
+        Motor1.setMode(RunMode.RESET_ENCODERS);
+        Motor2.setMode(RunMode.RESET_ENCODERS);
+        Motor3.setMode(RunMode.RESET_ENCODERS);
+        Motor4.setMode(RunMode.RESET_ENCODERS);
+
+
+
+        Motor1.setMode(RunMode.RUN_USING_ENCODER);
+        Motor2.setMode(RunMode.RUN_USING_ENCODER);
+        Motor3.setMode(RunMode.RUN_USING_ENCODER);
+        Motor4.setMode(RunMode.RUN_USING_ENCODER);
+
+
+
+        Motor1.setPower(power);
+        Motor2.setPower(power);
+        Motor3.setPower(power);
+        Motor4.setPower(-power);
+
+        sleep(miliseconds);
+
+        Motor1.setPower(0);
+        Motor2.setPower(0);
+        Motor3.setPower(0);
+        Motor4.setPower(0);
+
+        while (Motor1.isBusy() & Motor2.isBusy()) {
+
         }
     }
+    public Image getframe(){
+        VuforiaLocalizer.CloseableFrame frame = null;
+        try{
+            frame = vuforia.getFrameQueue().take();
+            long numImages = frame.getNumImages();
+            Image rgbImage = null;
+            for (int i = 0; i < numImages; i++) {
+                Image img = frame.getImage(i);
+                int fmt = img.getFormat();
+                if (fmt == PIXEL_FORMAT.RGB565) {
+                    rgbImage = frame.getImage(i);
+                    break;
+                }
+            }
+            return rgbImage;
+        }
+        catch(InterruptedException exc){
+            return null;
+        }
+        finally{
+            if (frame != null) frame.close();
+        }
+
+    }
+
 
     @Override public void runOpMode() {
 
         Arm = hardwareMap.servo.get("JewelServo");
-        Arm.setPosition(ARM_HOME);
+        Arm.setPosition(0.6);
 
         Motor1 = hardwareMap.dcMotor.get("Motor1");
         Motor2 = hardwareMap.dcMotor.get("Motor2");
         Motor3 = hardwareMap.dcMotor.get("Motor3");
         Motor4 = hardwareMap.dcMotor.get("Motor4");
+
+        BNO055IMU.Parameters gyroParam = new BNO055IMU.Parameters();
+        gyroParam.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
+        gyroParam.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+        gyroParam.calibrationDataFile = "BNO055IMUCalibration.json"; // see the calibration sample opmode
+        gyroParam.loggingEnabled      = true;
+        gyroParam.loggingTag          = "IMU";
+        gyroParam.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
+
+        // Retrieve and initialize, the IMU. We expect the IMU to be attached to an I2C port
+        // on a Core Device Interface Module, configured to be a sensor of type "AdaFruit IMU",
+        // and named "imu".
+        imu = hardwareMap.get(BNO055IMU.class,"imu");
+        imu.initialize(gyroParam);
+
 
         // Set all motors to zero power
         Motor1.setPower(0);
@@ -118,18 +209,7 @@ public class NEWREDBACK extends LinearOpMode {
         // OR...  Do Not Activate the Camera Monitor View, to save power
         // VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters();
 
-        /*
-         * IMPORTANT: You need to obtain your own license key to use Vuforia. The string below with which
-         * 'parameters.vuforiaLicenseKey' is initialized is for illustration only, and will not function.
-         * A Vuforia 'Development' license key, can be obtained free of charge from the Vuforia developer
-         * web site at https://developer.vuforia.com/license-manager.
-         *
-         * Vuforia license keys are always 380 characters long, and look as if they contain mostly
-         * random data. As an example, here is a example of a fragment of a valid key:
-         *      ... yIgIzTqZ4mWjk9wd3cZO9T1axEqzuhxoGlfOOI2dRzKS4T0hQ8kT ...
-         * Once you've obtained a license key, copy the string from the Vuforia web site
-         * and paste it in to your code onthe next line, between the double quotes.
-         */
+
         parameters.vuforiaLicenseKey = "Aegsx6b/////AAAAGZ1XCL5uwk7gp+PMLDLPoOcm5/yyHm4ex0tWMj1G+87mVQHnJ6oK2EdHHthatiYRvKuuvmegcsrLkbjEL7IzSGCh9pjtiavsoCBwMcB1rtOyjwv1X+Veys1noJNxEZF8W7tSXyWDvigaqNmj8y/fIQ+Q03SkEXlytTqMTHgSpcs8l1qbd4o22QrfCik+i/YYrpdOPU82yNY54jmdfPX5r8gEt1zboWugVcwewkh7TL8f00CDz4TgvBXdqZN4k76GLdwxKhXIe9ThEGS/ghb/yyYoXCmZwX6MZN62V3BcAjiIowbZDkUtlozp2eiAJl/7O4/WXfiKhl+g7bMlFT99ID7m7wWZYmSX/7A4zJsVpE+Q";
 
         /*
@@ -153,10 +233,11 @@ public class NEWREDBACK extends LinearOpMode {
         telemetry.addData(">", "Press Play to start");
         telemetry.update();
         waitForStart();
+        double startang = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
 
         relicTrackables.activate();
 
-        while (opModeIsActive()) {
+
 
             /**
              * See if any of the instances of {@link relicTemplate} are currently visible.
@@ -164,45 +245,56 @@ public class NEWREDBACK extends LinearOpMode {
              * UNKNOWN, LEFT, CENTER, and RIGHT. When a VuMark is visible, something other than
              * UNKNOWN will be returned by {@link RelicRecoveryVuMark#from(VuforiaTrackable)}.
              */
-            Arm.setPosition(ARM_MAX_RANGE);
+            Arm.setPosition(0.08);
+            sleep(2000);
             double red = colorSensor.red();
             double blue = colorSensor.blue();
+
+
             if (blue - red > 0) {
                 telemetry.addLine("BLUE!");
                 telemetry.update();
-                //driveForward(0.8, 0);
-                //sleep(500);
-                //driveForward(0.8, 0);
-                //sleep(500);
+                gyroturn(6, 0.2);
+                sleep(400);
+                Arm.setPosition(0.7);
+                gyroturn(-6, -0.2);
             } else if (blue - red < 0) {
                 telemetry.addLine("RED!");
                 telemetry.update();
-                //setMotors(-0.8);
-                //sleep(500);
-                //setMotors(0.8);
-                //sleep(500);
+                gyroturn(-6, -0.2);
+                sleep(400);
+                Arm.setPosition(0.7);
+                gyroturn(6, 0.2);
             }
             sleep(2000);
-            Arm.setPosition(ARM_HOME);
-            //setMotors(1);
-            sleep(2000);
-            driveForward(10, 0.5);
-            driveForward(2500, 0.75);
+            driveForward(350,-0.38);
+            sleep(200);
+            gyroturn(-5,-0.2);
+
+
+        while(true) {
+
             RelicRecoveryVuMark vuMark = RelicRecoveryVuMark.from(relicTemplate);
+
             if (vuMark != RelicRecoveryVuMark.UNKNOWN) {
 
                 /* Found an instance of the template. In the actual game, you will probably
                  * loop until this condition occurs, then move on to act accordingly depending
-                 * on which VuMark was visible. */
+                * on which VuMark was visible. */
                 telemetry.addData("VuMark", "%s visible", vuMark);
-                if (vuMark == RelicRecoveryVuMark.LEFT) {
-
+                if (vuMark == RelicRecoveryVuMark.RIGHT) {
+                    driveForward(1000, -0.6);
+                } else if (vuMark == RelicRecoveryVuMark.CENTER) {
+                    driveForward(1500, -0.6);
+                } else if (vuMark == RelicRecoveryVuMark.LEFT) {
+                    driveForward(2000, -0.6);
                 }
-
+                gyroturn(90, 0.4);
+                driveForward(400, -0.4);
                 /* For fun, we also exhibit the navigational pose. In the Relic Recovery game,
                  * it is perhaps unlikely that you will actually need to act on this pose information, but
                  * we illustrate it nevertheless, for completeness. */
-                OpenGLMatrix pose = ((VuforiaTrackableDefaultListener)relicTemplate.getListener()).getPose();
+                OpenGLMatrix pose = ((VuforiaTrackableDefaultListener) relicTemplate.getListener()).getPose();
                 telemetry.addData("Pose", format(pose));
 
                 /* We further illustrate how to decompose the pose into useful rotational and
@@ -221,15 +313,17 @@ public class NEWREDBACK extends LinearOpMode {
                     double rY = rot.secondAngle;
                     double rZ = rot.thirdAngle;
                 }
-            }
-            else {
+            } else {
                 telemetry.addData("VuMark", "not visible");
             }
-            stop();
-
             telemetry.update();
         }
-    }
+
+
+
+
+        }
+
 
     String format(OpenGLMatrix transformationMatrix) {
         return (transformationMatrix != null) ? transformationMatrix.formatAsTransform() : "null";
