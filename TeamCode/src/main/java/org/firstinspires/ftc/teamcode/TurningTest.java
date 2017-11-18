@@ -28,8 +28,6 @@ public class TurningTest extends LinearOpMode{
 
     public void gyroturn(double angle, double power){
 
-
-
         Orientation angles   = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
         double initval = angles.firstAngle;
 
