@@ -52,7 +52,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
 
 @Autonomous
 
-public class NEWREDBACK extends LinearOpMode {
+public class BlueBack extends LinearOpMode {
 
     private DcMotor Motor1;
     private DcMotor Motor2;
@@ -239,38 +239,37 @@ public class NEWREDBACK extends LinearOpMode {
 
 
 
-            /**
-             * See if any of the instances of {@link relicTemplate} are currently visible.
-             * {@link RelicRecoveryVuMark} is an enum which can have the following values:
-             * UNKNOWN, LEFT, CENTER, and RIGHT. When a VuMark is visible, something other than
-             * UNKNOWN will be returned by {@link RelicRecoveryVuMark#from(VuforiaTrackable)}.
-             */
-            Arm.setPosition(0.08);
-            sleep(2000);
-            double red = colorSensor.red();
-            double blue = colorSensor.blue();
+        /**
+         * See if any of the instances of {@link relicTemplate} are currently visible.
+         * {@link RelicRecoveryVuMark} is an enum which can have the following values:
+         * UNKNOWN, LEFT, CENTER, and RIGHT. When a VuMark is visible, something other than
+         * UNKNOWN will be returned by {@link RelicRecoveryVuMark#from(VuforiaTrackable)}.
+         */
+        Arm.setPosition(0.08);
+        sleep(2000);
+        double red = colorSensor.red();
+        double blue = colorSensor.blue();
 
 
-            if (blue - red > 0) {
-                telemetry.addLine("BLUE!");
-                telemetry.update();
-                gyroturn(6, 0.2);
-                sleep(400);
-                Arm.setPosition(0.7);
-                gyroturn(-6, -0.2);
-            } else if (blue - red < 0) {
-                telemetry.addLine("RED!");
-                telemetry.update();
-                gyroturn(-6, -0.2);
-                sleep(400);
-                Arm.setPosition(0.7);
-                gyroturn(6, 0.2);
-            }
-            sleep(2000);
-            driveForward(350,-0.38);
-            sleep(200);
-            gyroturn(-5,-0.2);
+        if (blue - red < 0) {
+            telemetry.addLine("RED!");
+            telemetry.update();
+            gyroturn(6, 0.2);
             sleep(400);
+            Arm.setPosition(0.7);
+            gyroturn(-6, -0.2);
+        } else if (blue - red > 0) {
+            telemetry.addLine("BLUE!");
+            telemetry.update();
+            gyroturn(-6, -0.2);
+            sleep(400);
+            Arm.setPosition(0.7);
+            gyroturn(6, 0.2);
+        }
+        sleep(2000);
+        driveForward(350,-0.38);
+        sleep(200);
+        gyroturn(-5,-0.2);
 
 
         while(true) {
@@ -323,7 +322,7 @@ public class NEWREDBACK extends LinearOpMode {
 
 
 
-        }
+    }
 
 
     String format(OpenGLMatrix transformationMatrix) {
