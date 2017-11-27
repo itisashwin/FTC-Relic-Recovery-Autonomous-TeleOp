@@ -14,7 +14,6 @@ import com.vuforia.PIXEL_FORMAT;
 import org.firstinspires.ftc.robotcontroller.external.samples.ConceptVuforiaNavigation;
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix;
-import org.firstinspires.ftc.robotcore.external.matrices.VectorF;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
@@ -109,24 +108,24 @@ public class NEWREDBACK extends LinearOpMode {
 
     }
     public void driveForward(int miliseconds, double power) {
-        Motor1.setMode(RunMode.RESET_ENCODERS);
+        //Motor1.setMode(RunMode.RESET_ENCODERS);
         Motor2.setMode(RunMode.RESET_ENCODERS);
         Motor3.setMode(RunMode.RESET_ENCODERS);
-        Motor4.setMode(RunMode.RESET_ENCODERS);
+        //Motor4.setMode(RunMode.RESET_ENCODERS);
 
 
 
-        Motor1.setMode(RunMode.RUN_USING_ENCODER);
+        //Motor1.setMode(RunMode.RUN_USING_ENCODER);
         Motor2.setMode(RunMode.RUN_USING_ENCODER);
         Motor3.setMode(RunMode.RUN_USING_ENCODER);
-        Motor4.setMode(RunMode.RUN_USING_ENCODER);
+        //Motor4.setMode(RunMode.RUN_USING_ENCODER);
 
 
 
-        Motor1.setPower(power);
-        Motor2.setPower(power);
+        //Motor1.setPower(power);
+        Motor2.setPower(0.95*power);
         Motor3.setPower(power);
-        Motor4.setPower(-power);
+        //Motor4.setPower(-power);
 
         sleep(miliseconds);
 
@@ -200,7 +199,8 @@ public class NEWREDBACK extends LinearOpMode {
         colorSensor = hardwareMap.get(ColorSensor.class, "sensor_color");
 
         /*
-         * To start up Vuforia, tell it the view that we wish to use for camera monitor (on the RC phone);
+         * To start
+         * up Vuforia, tell it the view that we wish to use for camera monitor (on the RC phone);
          * If no camera monitor is desired, use the parameterless constructor instead (commented out below).
          */
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
@@ -233,11 +233,13 @@ public class NEWREDBACK extends LinearOpMode {
         telemetry.addData(">", "Press Play to start");
         telemetry.update();
         waitForStart();
+
+
         double startang = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
 
         relicTrackables.activate();
 
-
+        while(opModeIsActive()){
 
             /**
              * See if any of the instances of {@link relicTemplate} are currently visible.
@@ -257,68 +259,71 @@ public class NEWREDBACK extends LinearOpMode {
                 gyroturn(6, 0.2);
                 sleep(400);
                 Arm.setPosition(0.7);
-                gyroturn(-6, -0.2);
+                gyroturn(-6, -0.18);
             } else if (blue - red < 0) {
                 telemetry.addLine("RED!");
                 telemetry.update();
                 gyroturn(-6, -0.2);
                 sleep(400);
                 Arm.setPosition(0.7);
-                gyroturn(6, 0.2);
+                gyroturn(6, 0.18);
             }
             sleep(2000);
-            driveForward(350,-0.38);
+            driveForward(1150,-0.5);
             sleep(200);
-            gyroturn(-5,-0.2);
-            sleep(400);
+            stop();
 
 
-        while(true) {
 
-            RelicRecoveryVuMark vuMark = RelicRecoveryVuMark.from(relicTemplate);
-
-            if (vuMark != RelicRecoveryVuMark.UNKNOWN) {
-
-                /* Found an instance of the template. In the actual game, you will probably
-                 * loop until this condition occurs, then move on to act accordingly depending
-                * on which VuMark was visible. */
-                telemetry.addData("VuMark", "%s visible", vuMark);
-                if (vuMark == RelicRecoveryVuMark.RIGHT) {
-                    driveForward(1000, -0.6);
-                } else if (vuMark == RelicRecoveryVuMark.CENTER) {
-                    driveForward(1500, -0.6);
-                } else if (vuMark == RelicRecoveryVuMark.LEFT) {
-                    driveForward(2000, -0.6);
-                }
-                gyroturn(90, 0.4);
-                driveForward(400, -0.4);
-                /* For fun, we also exhibit the navigational pose. In the Relic Recovery game,
-                 * it is perhaps unlikely that you will actually need to act on this pose information, but
-                 * we illustrate it nevertheless, for completeness. */
-                OpenGLMatrix pose = ((VuforiaTrackableDefaultListener) relicTemplate.getListener()).getPose();
-                telemetry.addData("Pose", format(pose));
-
-                /* We further illustrate how to decompose the pose into useful rotational and
-                 * translational components */
-                if (pose != null) {
-                    VectorF trans = pose.getTranslation();
-                    Orientation rot = Orientation.getOrientation(pose, AxesReference.EXTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES);
-
-                    // Extract the X, Y, and Z components of the offset of the target relative to the robot
-                    double tX = trans.get(0);
-                    double tY = trans.get(1);
-                    double tZ = trans.get(2);
-
-                    // Extract the rotational components of the target relative to the robot
-                    double rX = rot.firstAngle;
-                    double rY = rot.secondAngle;
-                    double rZ = rot.thirdAngle;
-                }
-            } else {
-                telemetry.addData("VuMark", "not visible");
-            }
-            telemetry.update();
+//        while(true) {
+//
+//            RelicRecoveryVuMark vuMark = RelicRecoveryVuMark.from(relicTemplate);
+//
+//            if (vuMark != RelicRecoveryVuMark.UNKNOWN) {
+//
+//                /* Found an instance of the template. In the actual game, you will probably
+//                 * loop until this condition occurs, then move on to act accordingly depending
+//                * on which VuMark was visible. */
+//                telemetry.addData("VuMark", "%s visible", vuMark);
+//                if (vuMark == RelicRecoveryVuMark.RIGHT) {
+//                    driveForward(500, -0.6);
+//                } else if (vuMark == RelicRecoveryVuMark.CENTER) {
+//                    driveForward(600, -0.6);
+//                } else if (vuMark == RelicRecoveryVuMark.LEFT) {
+//                    driveForward(800, -0.6);
+//                }
+//                gyroturn(-90, -0.4);
+//                driveForward(150, -0.4);
+//                /* For fun, we also exhibit the navigational pose. In the Relic Recovery game,
+//                 * it is perhaps unlikely that you will actually need to act on this pose information, but
+//                 * we illustrate it nevertheless, for completeness. */
+//                OpenGLMatrix pose = ((VuforiaTrackableDefaultListener) relicTemplate.getListener()).getPose();
+//                telemetry.addData("Pose", format(pose));
+//                stop();
+//
+//                /* We further illustrate how to decompose the pose into useful rotational and
+//                 * translational components */
+//                if (pose != null) {
+//                    VectorF trans = pose.getTranslation();
+//                    Orientation rot = Orientation.getOrientation(pose, AxesReference.EXTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES);
+//
+//                    // Extract the X, Y, and Z components of the offset of the target relative to the robot
+//                    double tX = trans.get(0);
+//                    double tY = trans.get(1);
+//                    double tZ = trans.get(2);
+//
+//                    // Extract the rotational components of the target relative to the robot
+//                    double rX = rot.firstAngle;
+//                    double rY = rot.secondAngle;
+//                    double rZ = rot.thirdAngle;
+//                }
+//            } else {
+//                telemetry.addData("VuMark", "not visible");
+//            }
+//            telemetry.update();
+//        }
         }
+
 
 
 
@@ -330,3 +335,4 @@ public class NEWREDBACK extends LinearOpMode {
         return (transformationMatrix != null) ? transformationMatrix.formatAsTransform() : "null";
     }
 }
+

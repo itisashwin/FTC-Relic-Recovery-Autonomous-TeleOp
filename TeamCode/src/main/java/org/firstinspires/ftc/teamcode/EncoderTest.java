@@ -22,36 +22,44 @@ public class EncoderTest extends LinearOpMode{
     private DcMotor Motor2;
     private DcMotor Motor3;
     private DcMotor Motor4;
-
     private BNO055IMU imu;
 
-    public void driveForward(int seconds, double power) {
+    public void driveForward(int ticks, double power) {
         Motor1.setMode(RunMode.RESET_ENCODERS);
         Motor2.setMode(RunMode.RESET_ENCODERS);
         Motor3.setMode(RunMode.RESET_ENCODERS);
         Motor4.setMode(RunMode.RESET_ENCODERS);
 
+        Motor1.setTargetPosition(ticks);
+        Motor2.setTargetPosition(ticks);
+        Motor3.setTargetPosition(ticks);
+        Motor4.setTargetPosition(ticks);
 
 
-        Motor1.setMode(RunMode.RUN_USING_ENCODER);
-        Motor2.setMode(RunMode.RUN_USING_ENCODER);
-        Motor3.setMode(RunMode.RUN_USING_ENCODER);
-        Motor4.setMode(RunMode.RUN_USING_ENCODER);
+
+        Motor1.setMode(RunMode.RUN_TO_POSITION);
+        Motor2.setMode(RunMode.RUN_TO_POSITION);
+        Motor3.setMode(RunMode.RUN_TO_POSITION);
+        Motor4.setMode(RunMode.RUN_TO_POSITION);
+
+
 
 
         Motor1.setPower(power);
         Motor2.setPower(power);
         Motor3.setPower(power);
-        Motor4.setPower(-power);
+        Motor4.setPower(power);
 
-        sleep(seconds);
+
+
 
         Motor1.setPower(0);
         Motor2.setPower(0);
         Motor3.setPower(0);
         Motor4.setPower(0);
 
-        while (Motor1.isBusy() & Motor2.isBusy()) {
+        while (Motor1.isBusy() && Motor2.isBusy() && Motor3.isBusy() && Motor4.isBusy()){
+
 
         }
     }
@@ -60,39 +68,35 @@ public class EncoderTest extends LinearOpMode{
 
         Orientation angles   = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
         double initval = angles.firstAngle;
+        Motor1.setMode(RunMode.RESET_ENCODERS);
+        Motor2.setMode(RunMode.RESET_ENCODERS);
+        Motor3.setMode(RunMode.RESET_ENCODERS);
+        Motor4.setMode(RunMode.RESET_ENCODERS);
 
+        Motor1.setMode(RunMode.RUN_USING_ENCODER);
+        Motor2.setMode(RunMode.RUN_USING_ENCODER);
+        Motor3.setMode(RunMode.RUN_USING_ENCODER);
+        Motor4.setMode(RunMode.RUN_USING_ENCODER);
+
+        Motor1.setPower(power);
+        Motor2.setPower(-power);
+        Motor3.setPower(power);
+        Motor4.setPower(-power);
         if (angle > 0) {
-            while((angles.firstAngle - initval) < angle){
-
-                Motor1.setPower(power);
-                Motor2.setPower(-power);
-                Motor3.setPower(power);
-                Motor4.setPower(power);
-                angles   = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-
+            while ((angles.firstAngle - initval) < angle) {
+                angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
             }
-            Motor1.setPower(0);
-            Motor2.setPower(0);
-            Motor3.setPower(0);
-            Motor4.setPower(0);
-
         }
         else{
             while((angles.firstAngle - initval) > angle){
-
-                Motor1.setPower(power);
-                Motor2.setPower(-power);
-                Motor3.setPower(power);
-                Motor4.setPower(power);
                 angles   = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-
             }
-            Motor1.setPower(0);
-            Motor2.setPower(0);
-            Motor3.setPower(0);
-            Motor4.setPower(0);
-
         }
+        Motor1.setPower(0);
+        Motor2.setPower(0);
+        Motor3.setPower(0);
+        Motor4.setPower(0);
+
     }
 
 
@@ -118,6 +122,13 @@ public class EncoderTest extends LinearOpMode{
         imu.initialize(gyroParam);
         waitForStart();
 
+        while (opModeIsActive()){
+            gyroturn(90, 0.48);
+            //driveForward(1000,0.5);
+            stop();
+
+        }
+
 //        Motor1.setPower(0.7);
 //        Motor2.setPower(0.7);
 //        Motor3.setPower(0.7);
@@ -131,10 +142,10 @@ public class EncoderTest extends LinearOpMode{
         sleep(500);
         gyroturn(43, 0.48);
         sleep(500);*/
-        driveForward(600, 0.5);
-        sleep(500);
-        driveForward(500, 0.5);
-        stop();
+        // driveForward(2000, 0.5);
+        //sleep(500);
+        //driveForward(3000, 0.5);
+
 
 
     }

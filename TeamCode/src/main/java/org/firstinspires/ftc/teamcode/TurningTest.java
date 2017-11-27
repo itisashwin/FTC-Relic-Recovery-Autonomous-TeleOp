@@ -37,7 +37,7 @@ public class TurningTest extends LinearOpMode{
                 Motor1.setPower(power);
                 Motor2.setPower(-power);
                 Motor3.setPower(power);
-                Motor4.setPower(power);
+                Motor4.setPower(-power);
                 angles   = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
 
             }
@@ -53,7 +53,7 @@ public class TurningTest extends LinearOpMode{
                 Motor1.setPower(power);
                 Motor2.setPower(-power);
                 Motor3.setPower(power);
-                Motor4.setPower(power);
+                Motor4.setPower(-power);
                 angles   = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
 
             }
@@ -90,7 +90,7 @@ public class TurningTest extends LinearOpMode{
                 Motor1.setPower(-power);
                 Motor2.setPower(power);
                 Motor3.setPower(-power);
-                Motor4.setPower(-power);
+                Motor4.setPower(power);
                 angles   = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
 
             }
@@ -136,8 +136,8 @@ public class TurningTest extends LinearOpMode{
             Motor2.setPower(0);
             Motor3.setPower(0);
             Motor4.setPower(0);
-            gyroAlign(meme);
-            //gyroturn(-90, -0.48);
+            //gyroAlign(meme);
+            gyroturn(90, 0.48);
 
 
         }

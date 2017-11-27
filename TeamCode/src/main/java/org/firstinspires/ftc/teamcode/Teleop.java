@@ -72,21 +72,58 @@ public class Teleop extends LinearOpMode {
 
 
 
-
-
-
         ///colorSensor = hardwareMap.colorSensor.get("sensor_color");
 
         JewelServo.setPosition(0.7);
 
-
+        boolean meme = true;
         waitForStart();
         while (opModeIsActive()) {
 
-            Motor1.setPower(gamepad1.left_stick_y);
-            Motor3.setPower(gamepad1.left_stick_y);
-            Motor2.setPower(gamepad1.right_stick_y);
-            Motor4.setPower(-gamepad1.right_stick_y);
+
+
+            if(meme==true){
+
+                Motor1.setPower(gamepad1.left_stick_y);
+                Motor3.setPower(gamepad1.left_stick_y);
+                Motor2.setPower(gamepad1.right_stick_y);
+                Motor4.setPower(-gamepad1.right_stick_y);
+
+            }
+            else{
+                Motor1.setPower(-gamepad1.left_stick_y);
+                Motor3.setPower(-gamepad1.left_stick_y);
+                Motor2.setPower(-gamepad1.right_stick_y);
+                Motor4.setPower(gamepad1.right_stick_y);
+
+            }
+            if(gamepad1.a == true ){
+                if(meme==true){
+                    meme = false;
+                    sleep(100);
+                }
+                else{
+                    meme = true;
+                    sleep(100);
+                }
+            }
+
+
+
+            if (gamepad1.left_bumper == true){
+                RightServo.setPower(1);
+                LeftServo.setPower(1);
+            }
+            else if (gamepad1.right_bumper == true){
+                RightServo.setPower(-1);
+                LeftServo.setPower(-1);
+            }
+            else{
+                RightServo.setPower(0);
+                LeftServo.setPower(0);
+            }
+
+
             if(gamepad2.dpad_up == true){
                 RelicArm.setPower(0.30);
             }
@@ -108,28 +145,17 @@ public class Teleop extends LinearOpMode {
             }
 
 
-            if (gamepad1.left_bumper == true){
-                RightServo.setPower(1);
-                LeftServo.setPower(-1);
-            }
-            else if(gamepad1.right_bumper == true){
-                RightServo.setPower(-1);
-                LeftServo.setPower(1);
-            }
-            else{
-                RightServo.setPower(0);
-                LeftServo.setPower(-0.02);
-            }
+
             if (gamepad1.dpad_up == true){
 //                MoveLift(1000,0.5);
-                Winch1.setPower(0.3);
-                Winch2.setPower(-0.3);
+                Winch1.setPower(0.4);
+                Winch2.setPower(-0.4);
 
             }
             else if (gamepad1.dpad_down == true){
 //                MoveLift(-1000, 0.5);
-                Winch1.setPower(-0.3);
-                Winch2.setPower(0.3);
+                Winch1.setPower(-0.4);
+                Winch2.setPower(0.4);
             }
             else{
                 Winch1.setPower(0.01);

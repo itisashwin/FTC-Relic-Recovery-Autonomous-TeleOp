@@ -14,7 +14,6 @@ import com.vuforia.PIXEL_FORMAT;
 import org.firstinspires.ftc.robotcontroller.external.samples.ConceptVuforiaNavigation;
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix;
-import org.firstinspires.ftc.robotcore.external.matrices.VectorF;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
@@ -234,92 +233,91 @@ public class BlueBack extends LinearOpMode {
         telemetry.update();
         waitForStart();
         double startang = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
-
-        relicTrackables.activate();
-
-
-
-        /**
-         * See if any of the instances of {@link relicTemplate} are currently visible.
-         * {@link RelicRecoveryVuMark} is an enum which can have the following values:
-         * UNKNOWN, LEFT, CENTER, and RIGHT. When a VuMark is visible, something other than
-         * UNKNOWN will be returned by {@link RelicRecoveryVuMark#from(VuforiaTrackable)}.
-         */
-        Arm.setPosition(0.08);
-        sleep(2000);
-        double red = colorSensor.red();
-        double blue = colorSensor.blue();
+        while (opModeIsActive()) {
+            relicTrackables.activate();
 
 
-        if (blue - red < 0) {
-            telemetry.addLine("RED!");
-            telemetry.update();
-            gyroturn(6, 0.2);
-            sleep(400);
-            Arm.setPosition(0.7);
-            gyroturn(-6, -0.2);
-        } else if (blue - red > 0) {
-            telemetry.addLine("BLUE!");
-            telemetry.update();
-            gyroturn(-6, -0.2);
-            sleep(400);
-            Arm.setPosition(0.7);
-            gyroturn(6, 0.2);
-        }
-        sleep(2000);
-        driveForward(350,-0.38);
-        sleep(200);
-        gyroturn(-5,-0.2);
+            /**
+             * See if any of the instances of {@link relicTemplate} are currently visible.
+             * {@link RelicRecoveryVuMark} is an enum which can have the following values:
+             * UNKNOWN, LEFT, CENTER, and RIGHT. When a VuMark is visible, something other than
+             * UNKNOWN will be returned by {@link RelicRecoveryVuMark#from(VuforiaTrackable)}.
+             */
+            Arm.setPosition(0.08);
+            sleep(2000);
+            double red = colorSensor.red();
+            double blue = colorSensor.blue();
 
 
-        while(true) {
-
-            RelicRecoveryVuMark vuMark = RelicRecoveryVuMark.from(relicTemplate);
-
-            if (vuMark != RelicRecoveryVuMark.UNKNOWN) {
-
-                /* Found an instance of the template. In the actual game, you will probably
-                 * loop until this condition occurs, then move on to act accordingly depending
-                * on which VuMark was visible. */
-                telemetry.addData("VuMark", "%s visible", vuMark);
-                if (vuMark == RelicRecoveryVuMark.RIGHT) {
-                    driveForward(1000, -0.6);
-                } else if (vuMark == RelicRecoveryVuMark.CENTER) {
-                    driveForward(1500, -0.6);
-                } else if (vuMark == RelicRecoveryVuMark.LEFT) {
-                    driveForward(2000, -0.6);
-                }
-                gyroturn(90, 0.4);
-                driveForward(400, -0.4);
-                /* For fun, we also exhibit the navigational pose. In the Relic Recovery game,
-                 * it is perhaps unlikely that you will actually need to act on this pose information, but
-                 * we illustrate it nevertheless, for completeness. */
-                OpenGLMatrix pose = ((VuforiaTrackableDefaultListener) relicTemplate.getListener()).getPose();
-                telemetry.addData("Pose", format(pose));
-
-                /* We further illustrate how to decompose the pose into useful rotational and
-                 * translational components */
-                if (pose != null) {
-                    VectorF trans = pose.getTranslation();
-                    Orientation rot = Orientation.getOrientation(pose, AxesReference.EXTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES);
-
-                    // Extract the X, Y, and Z components of the offset of the target relative to the robot
-                    double tX = trans.get(0);
-                    double tY = trans.get(1);
-                    double tZ = trans.get(2);
-
-                    // Extract the rotational components of the target relative to the robot
-                    double rX = rot.firstAngle;
-                    double rY = rot.secondAngle;
-                    double rZ = rot.thirdAngle;
-                }
-            } else {
-                telemetry.addData("VuMark", "not visible");
+            if (blue - red < 0) {
+                telemetry.addLine("RED!");
+                telemetry.update();
+                gyroturn(6, 0.2);
+                sleep(400);
+                Arm.setPosition(0.7);
+                gyroturn(-6, -0.2);
+            } else if (blue - red > 0) {
+                telemetry.addLine("BLUE!");
+                telemetry.update();
+                gyroturn(-6, -0.2);
+                sleep(400);
+                Arm.setPosition(0.7);
+                gyroturn(6, 0.2);
             }
-            telemetry.update();
+            sleep(2000);
+            driveForward(1150, 0.38);
+            sleep(200);
+            gyroturn(-5, -0.2);
+            stop();
+
+//        while(true) {
+//
+//            RelicRecoveryVuMark vuMark = RelicRecoveryVuMark.from(relicTemplate);
+//
+//            if (vuMark != RelicRecoveryVuMark.UNKNOWN) {
+//
+//                /* Found an instance of the template. In the actual game, you will probably
+//                 * loop until this condition occurs, then move on to act accordingly depending
+//                * on which VuMark was visible. */
+//                telemetry.addData("VuMark", "%s visible", vuMark);
+//                if (vuMark == RelicRecoveryVuMark.RIGHT) {
+//                    driveForward(1000, -0.6);
+//                } else if (vuMark == RelicRecoveryVuMark.CENTER) {
+//                    driveForward(1500, -0.6);
+//                } else if (vuMark == RelicRecoveryVuMark.LEFT) {
+//                    driveForward(2000, -0.6);
+//                }
+//                gyroturn(90, 0.4);
+//                driveForward(400, -0.4);
+//                /* For fun, we also exhibit the navigational pose. In the Relic Recovery game,
+//                 * it is perhaps unlikely that you will actually need to act on this pose information, but
+//                 * we illustrate it nevertheless, for completeness. */
+//                OpenGLMatrix pose = ((VuforiaTrackableDefaultListener) relicTemplate.getListener()).getPose();
+//                telemetry.addData("Pose", format(pose));
+//
+//                /* We further illustrate how to decompose the pose into useful rotational and
+//                 * translational components */
+//                if (pose != null) {
+//                    VectorF trans = pose.getTranslation();
+//                    Orientation rot = Orientation.getOrientation(pose, AxesReference.EXTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES);
+//
+//                    // Extract the X, Y, and Z components of the offset of the target relative to the robot
+//                    double tX = trans.get(0);
+//                    double tY = trans.get(1);
+//                    double tZ = trans.get(2);
+//
+//                    // Extract the rotational components of the target relative to the robot
+//                    double rX = rot.firstAngle;
+//                    double rY = rot.secondAngle;
+//                    double rZ = rot.thirdAngle;
+//                }
+//            } else {
+//                telemetry.addData("VuMark", "not visible");
+//            }
+//            telemetry.update();
+//        }
+//
         }
-
-
 
 
     }
