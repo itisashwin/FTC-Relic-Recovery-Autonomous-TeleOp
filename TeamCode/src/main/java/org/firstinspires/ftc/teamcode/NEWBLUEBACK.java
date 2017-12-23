@@ -51,7 +51,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
 
 @Autonomous
 
-public class NEWREDBACK extends LinearOpMode {
+public class NEWBLUEBACK extends LinearOpMode {
 
     private DcMotor Motor1;
     private DcMotor Motor2;
@@ -76,11 +76,11 @@ public class NEWREDBACK extends LinearOpMode {
     VuforiaLocalizer vuforia;
 
     public void Flip(int ticks, double power) {
-        GlyphFlip.setMode(DcMotor.RunMode.RESET_ENCODERS);
+        GlyphFlip.setMode(RunMode.RESET_ENCODERS);
 
         GlyphFlip.setTargetPosition(ticks);
 
-        GlyphFlip.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        GlyphFlip.setMode(RunMode.RUN_TO_POSITION);
 
         GlyphFlip.setPower(power);
 
@@ -141,10 +141,10 @@ public class NEWREDBACK extends LinearOpMode {
         }
     }
     public void driveForward(int ticks, double power) {
-        Motor1.setMode(DcMotor.RunMode.RESET_ENCODERS);
-        Motor2.setMode(DcMotor.RunMode.RESET_ENCODERS);
-        Motor3.setMode(DcMotor.RunMode.RESET_ENCODERS);
-        Motor4.setMode(DcMotor.RunMode.RESET_ENCODERS);
+        Motor1.setMode(RunMode.RESET_ENCODERS);
+        Motor2.setMode(RunMode.RESET_ENCODERS);
+        Motor3.setMode(RunMode.RESET_ENCODERS);
+        Motor4.setMode(RunMode.RESET_ENCODERS);
 
         Motor1.setTargetPosition(-ticks);
         Motor2.setTargetPosition(ticks);
@@ -152,10 +152,10 @@ public class NEWREDBACK extends LinearOpMode {
         Motor4.setTargetPosition(ticks);
 
 
-        Motor1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        Motor2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        Motor3.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        Motor4.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        Motor1.setMode(RunMode.RUN_TO_POSITION);
+        Motor2.setMode(RunMode.RUN_TO_POSITION);
+        Motor3.setMode(RunMode.RUN_TO_POSITION);
+        Motor4.setMode(RunMode.RUN_TO_POSITION);
 
 
         Motor1.setPower(power);
@@ -300,18 +300,20 @@ public class NEWREDBACK extends LinearOpMode {
             double blue = colorSensor.blue();
 
 
-            if (blue - red > 0) {
-                telemetry.addLine("BLUE!");
-                gyroturn(10, 0.23,1);
-                sleep(400);
-                Arm.setPosition(0.38);
-                gyroturn(-10, 0.23,1);
-            } else if (blue - red < 0) {
+            if (blue - red < 0) {
                 telemetry.addLine("RED!");
-                gyroturn(-10, 0.23,1);
+                telemetry.update();
+                gyroturn(11, 0.18, 1);
                 sleep(400);
                 Arm.setPosition(0.38);
-                gyroturn(11.2, 0.23,1);
+                gyroturn(-11, 0.18, 1);
+            } else if (blue - red > 0) {
+                telemetry.addLine("BLUE!");
+                telemetry.update();
+                gyroturn(-11, 0.18, 1);
+                sleep(400);
+                Arm.setPosition(0.38);
+                gyroturn(11, 0.18, 1);
             }
             sleep(2000);
 
@@ -326,22 +328,22 @@ public class NEWREDBACK extends LinearOpMode {
             telemetry.update();
 
                 if (vuMark == RelicRecoveryVuMark.RIGHT) {
-                    driveForward(2150, 0.3);
+                    driveForward(-2450,- 0.3);
                 } else if (vuMark == RelicRecoveryVuMark.CENTER) {
-                    driveForward(2850, 0.3);
+                    driveForward(-3050, -0.3);
                 } else if (vuMark == RelicRecoveryVuMark.LEFT) {
-                    driveForward(3800, 0.3);
+                    driveForward(-4000, -0.3);
                 } else if (vuMark == RelicRecoveryVuMark.UNKNOWN) {
-                    driveForward(125,0.2);
+                    driveForward(-100,-0.2);
                     vuMark = RelicRecoveryVuMark.from(relicTemplate);
                     if (vuMark == RelicRecoveryVuMark.RIGHT) {
-                        driveForward(2025, 0.3);
+                        driveForward(-2350, -0.3);
                     } else if (vuMark == RelicRecoveryVuMark.CENTER) {
-                        driveForward(2725, 0.3);
+                        driveForward(-2950, -0.3);
                     } else if (vuMark == RelicRecoveryVuMark.LEFT) {
-                        driveForward(3675, 0.3);
+                        driveForward(-3900, -0.3);
                     } else if (vuMark == RelicRecoveryVuMark.UNKNOWN) {
-                        driveForward(3675,0.3);
+                        driveForward(-3900,-0.2);
                         vuMark = RelicRecoveryVuMark.from(relicTemplate);
 
 
@@ -351,23 +353,17 @@ public class NEWREDBACK extends LinearOpMode {
                 telemetry.addData("VuMark", "%s visible", vuMark);
                 telemetry.update();
                 gyroturn(-88, 0.6, 1.265);
-                driveForward(450, 0.2);
+                driveForward(400, 0.2);
                 Flip(130,0.5);
                 driveForward(50,0.2);
                 driveForward(-300,-0.2);
                 driveForward(200,0.2);
-                    /* For fun, we also exhibit the navigational pose. In the Relic Recovery game,
+                /* For fun, we also exhibit the navigational pose. In the Relic Recovery game,
                  * it is perhaps unlikely that you will actually need to act on this pose information, but
                  * we illustrate it nevertheless, for completeness. */
                 OpenGLMatrix pose = ((VuforiaTrackableDefaultListener) relicTemplate.getListener()).getPose();
                 telemetry.addData("Pose", format(pose));
                 stop();
-
-
-
-
-
-
 
 
 

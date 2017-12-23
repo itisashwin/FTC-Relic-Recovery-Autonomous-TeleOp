@@ -5,12 +5,7 @@ import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotor.RunMode;
-
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
-import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+import com.qualcomm.robotcore.hardware.DcMotorSimple.Direction;
 
 /**
  * Created by Shreyas on 10/27/17.
@@ -25,79 +20,47 @@ public class EncoderTest extends LinearOpMode{
     private BNO055IMU imu;
 
     public void driveForward(int ticks, double power) {
-        Motor1.setMode(RunMode.RESET_ENCODERS);
-        Motor2.setMode(RunMode.RESET_ENCODERS);
-        Motor3.setMode(RunMode.RESET_ENCODERS);
-        Motor4.setMode(RunMode.RESET_ENCODERS);
+//        Motor1.setMode(RunMode.RESET_ENCODERS);
+        Motor2.setMode(DcMotor.RunMode.RESET_ENCODERS);
+//        Motor3.setMode(DcMotor.RunMode.RESET_ENCODERS);
+//        Motor4.setMode(RunMode.RESET_ENCODERS);
 
-        Motor1.setTargetPosition(ticks);
+//        Motor1.setTargetPosition(ticks);
         Motor2.setTargetPosition(ticks);
-        Motor3.setTargetPosition(ticks);
-        Motor4.setTargetPosition(ticks);
-
-
-
-        Motor1.setMode(RunMode.RUN_TO_POSITION);
-        Motor2.setMode(RunMode.RUN_TO_POSITION);
-        Motor3.setMode(RunMode.RUN_TO_POSITION);
-        Motor4.setMode(RunMode.RUN_TO_POSITION);
+        //Motor3.setTargetPosition(ticks);
 
 
 
 
-        Motor1.setPower(power);
+//        Motor1.setMode(RunMode.RUN_TO_POSITION);
+        Motor2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//        Motor3.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//        Motor4.setMode(RunMode.RUN_TO_POSITION);
+
+
+
+
+//        Motor1.setPower(power);
         Motor2.setPower(power);
-        Motor3.setPower(power);
-        Motor4.setPower(power);
+//        Motor3.setPower(power);
+//        Motor4.setPower(power);
 
 
+        while (Motor2.isBusy()){
+            double meme = Motor2.getPower();
+            Motor1.setPower(meme);
+            Motor3.setPower(meme);
+            Motor4.setPower(meme);
 
+
+        }
 
         Motor1.setPower(0);
         Motor2.setPower(0);
         Motor3.setPower(0);
         Motor4.setPower(0);
-
-        while (Motor1.isBusy() && Motor2.isBusy() && Motor3.isBusy() && Motor4.isBusy()){
-
-
-        }
     }
 
-    public void gyroturn(double angle, double power){
-
-        Orientation angles   = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-        double initval = angles.firstAngle;
-        Motor1.setMode(RunMode.RESET_ENCODERS);
-        Motor2.setMode(RunMode.RESET_ENCODERS);
-        Motor3.setMode(RunMode.RESET_ENCODERS);
-        Motor4.setMode(RunMode.RESET_ENCODERS);
-
-        Motor1.setMode(RunMode.RUN_USING_ENCODER);
-        Motor2.setMode(RunMode.RUN_USING_ENCODER);
-        Motor3.setMode(RunMode.RUN_USING_ENCODER);
-        Motor4.setMode(RunMode.RUN_USING_ENCODER);
-
-        Motor1.setPower(power);
-        Motor2.setPower(-power);
-        Motor3.setPower(power);
-        Motor4.setPower(-power);
-        if (angle > 0) {
-            while ((angles.firstAngle - initval) < angle) {
-                angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-            }
-        }
-        else{
-            while((angles.firstAngle - initval) > angle){
-                angles   = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-            }
-        }
-        Motor1.setPower(0);
-        Motor2.setPower(0);
-        Motor3.setPower(0);
-        Motor4.setPower(0);
-
-    }
 
 
 
@@ -107,6 +70,7 @@ public class EncoderTest extends LinearOpMode{
         Motor2 = hardwareMap.dcMotor.get("Motor2");
         Motor3 = hardwareMap.dcMotor.get("Motor3");
         Motor4 = hardwareMap.dcMotor.get("Motor4");
+        Motor4.setDirection(Direction.REVERSE);
         BNO055IMU.Parameters gyroParam = new BNO055IMU.Parameters();
         gyroParam.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
         gyroParam.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
@@ -123,8 +87,7 @@ public class EncoderTest extends LinearOpMode{
         waitForStart();
 
         while (opModeIsActive()){
-            gyroturn(90, 0.48);
-            //driveForward(1000,0.5);
+            driveForward(1000,0.3);
             stop();
 
         }

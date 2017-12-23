@@ -2,9 +2,9 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotor.RunMode;
+import com.qualcomm.robotcore.hardware.DcMotorSimple.Direction;
 import com.qualcomm.robotcore.hardware.Servo;
 
 
@@ -19,37 +19,35 @@ public class Teleop extends LinearOpMode {
     private DcMotor Motor2;
     private DcMotor Motor3;
     private DcMotor Motor4;
+
+    private DcMotor GlyphFlip;
+
     private DcMotor Winch1;
-    private DcMotor Winch2;
-    private DcMotor RelicArm;
-    private CRServo LeftServo;
-    private CRServo RightServo;
-    private Servo GlyphGrabber;
-    private Servo RightGrab;
-    private Servo LeftGrab;
-    private Servo RelicServo;
+
     private Servo JewelServo;
 
+    private DcMotor GlyphMotor1;
+    private DcMotor GlyphMotor2;
 
-    public void MoveLift(double distance, double power) {
-        Winch1.setMode(RunMode.RESET_ENCODERS);
-        Winch2.setMode(RunMode.RESET_ENCODERS);
+    private Servo Glyphstacker;
+    private Servo Glyphstacker2;
 
-        Winch1.setTargetPosition(-(int) distance);
-        Winch2.setTargetPosition((int) distance);
+    public void Flip(int ticks, double power) {
+        GlyphFlip.setMode(DcMotor.RunMode.RESET_ENCODERS);
 
-        Winch1.setMode(RunMode.RUN_TO_POSITION);
-        Winch2.setMode(RunMode.RUN_TO_POSITION);
+        GlyphFlip.setTargetPosition(ticks);
 
-        Winch1.setPower(power);
-        Winch2.setPower(power);
+        GlyphFlip.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        while (Winch1.isBusy() && Winch2.isBusy()) {
+        GlyphFlip.setPower(power);
+
+        while (GlyphFlip.isBusy() ) {
         }
+
+        GlyphFlip.setPower(0);
+
+
     }
-
-
-
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -58,51 +56,55 @@ public class Teleop extends LinearOpMode {
         Motor2 = hardwareMap.dcMotor.get("Motor2");
         Motor3 = hardwareMap.dcMotor.get("Motor3");
         Motor4 = hardwareMap.dcMotor.get("Motor4");
+        Motor2.setDirection(Direction.REVERSE);
+
+
         Winch1 = hardwareMap.dcMotor.get("Winch1");
-        Winch2 = hardwareMap.dcMotor.get("Winch2");
-        RelicArm = hardwareMap.dcMotor.get("RelicArm");
-        RightServo = hardwareMap.crservo.get("RightServo");
-        LeftServo = hardwareMap.crservo.get("LeftServo");
-        GlyphGrabber = hardwareMap.servo.get("GlyphGrabber");
-        RightGrab = hardwareMap.servo.get("RightGrab");
-        LeftGrab = hardwareMap.servo.get("LeftGrab");
-        RelicServo = hardwareMap.servo.get("RelicServo");
+
         JewelServo = hardwareMap.servo.get("JewelServo");
 
+        GlyphMotor1 = hardwareMap.dcMotor.get("GlyphMotor1");
+        GlyphMotor2 = hardwareMap.dcMotor.get("GlyphMotor2");
 
+        Glyphstacker = hardwareMap.servo.get("Glyphstacker");
+        Glyphstacker2 = hardwareMap.servo.get("Glyphstacker2");
+        GlyphFlip = hardwareMap.dcMotor.get("GlyphFlip");
+        GlyphFlip.setMode(RunMode.RUN_USING_ENCODER);
 
 
         ///colorSensor = hardwareMap.colorSensor.get("sensor_color");
 
-        JewelServo.setPosition(0.7);
+        JewelServo.setPosition(0.4);
+        Glyphstacker.setPosition(0.08);
 
-        boolean meme = true;
+        boolean meme = false;
         waitForStart();
         while (opModeIsActive()) {
 
 
 
-            if(meme==true){
+            if (meme==true) {
 
-                Motor1.setPower(gamepad1.left_stick_y);
-                Motor3.setPower(gamepad1.left_stick_y);
-                Motor2.setPower(gamepad1.right_stick_y);
-                Motor4.setPower(-gamepad1.right_stick_y);
-
-            }
-            else{
-                Motor1.setPower(-gamepad1.left_stick_y);
-                Motor3.setPower(-gamepad1.left_stick_y);
-                Motor2.setPower(-gamepad1.right_stick_y);
-                Motor4.setPower(gamepad1.right_stick_y);
+                Motor1.setPower(0.4*gamepad1.left_stick_y);
+                Motor3.setPower(0.4*gamepad1.left_stick_y);
+                Motor2.setPower(0.4*gamepad1.right_stick_y);
+                Motor4.setPower(0.4*-gamepad1.right_stick_y);
 
             }
-            if(gamepad1.a == true ){
-                if(meme==true){
+            else {
+                Motor1.setPower(0.4*-gamepad1.right_stick_y);
+                Motor3.setPower(0.4*-gamepad1.right_stick_y);
+                Motor2.setPower(0.4*-gamepad1.left_stick_y);
+                Motor4.setPower(0.4*gamepad1.left_stick_y);
+
+            }
+
+            if (gamepad1.a == true ) {
+                if(meme==true) {
                     meme = false;
                     sleep(100);
                 }
-                else{
+                else {
                     meme = true;
                     sleep(100);
                 }
@@ -110,79 +112,63 @@ public class Teleop extends LinearOpMode {
 
 
 
-            if (gamepad1.left_bumper == true){
-                RightServo.setPower(1);
-                LeftServo.setPower(1);
-            }
+            if (gamepad1.left_bumper == true) {
+                    GlyphMotor1.setPower(0.75);
+                    GlyphMotor2.setPower(-0.75);
+                }
             else if (gamepad1.right_bumper == true){
-                RightServo.setPower(-1);
-                LeftServo.setPower(-1);
-            }
-            else{
-                RightServo.setPower(0);
-                LeftServo.setPower(0);
-            }
-
-
-            if(gamepad2.dpad_up == true){
-                RelicArm.setPower(0.30);
-            }
-            else if (gamepad2.dpad_down == true){
-                RelicArm.setPower(-0.30);
-            }
-            else{
-                RelicArm.setPower(0);
-            }
-            if(gamepad2.a == true){
-                if(RelicServo.getPosition() == 0.2){
-                    RelicServo.setPosition(0.75);
-                    sleep(400);
+                    GlyphMotor1.setPower(-0.75);
+                    GlyphMotor2.setPower(0.75);
                 }
-                else{
-                    RelicServo.setPosition(0.2);
-                    sleep(400);
-                }
+            else {
+                GlyphMotor1.setPower(0);
+                GlyphMotor2.setPower(0);
             }
 
 
 
-            if (gamepad1.dpad_up == true){
+            if (gamepad2.left_bumper == true) {
 //                MoveLift(1000,0.5);
-                Winch1.setPower(0.4);
-                Winch2.setPower(-0.4);
-
+                Winch1.setPower(0.6);
             }
-            else if (gamepad1.dpad_down == true){
+            else if (gamepad2.right_bumper == true) {
 //                MoveLift(-1000, 0.5);
                 Winch1.setPower(-0.4);
-                Winch2.setPower(0.4);
             }
-            else{
+            else {
                 Winch1.setPower(0.01);
-                Winch2.setPower(-0.01);
             }
-            if(gamepad1.y == true){
-                if (GlyphGrabber.getPosition() == 0.78 ){
-                    GlyphGrabber.setPosition(0.46);
-                    sleep(300);
+
+
+
+            //double UpPos = 0.8;
+//            if (gamepad1.x == true) {
+//                if(Glyphstacker.getPosition() == 0) {
+//                    Glyphstacker.setPosition(0.6);
+//                    Glyphstacker2.setPosition(0.6);
+//                    sleep(300);
+//                }
+//                else {
+//                    Glyphstacker.setPosition(0.05);
+//                    Glyphstacker2.setPosition(0.05);
+//                    sleep(300);
+//                }
+//            }
+
+
+                if (gamepad2.b == true){
+                    GlyphFlip.setPower(0.53);
+
+
                 }
+                else if(gamepad2.y == true){
+                    GlyphFlip.setPower(-0.53);
+                }
+
                 else{
-                    GlyphGrabber.setPosition(0.78);
-                    sleep(300);
+                    GlyphFlip.setPower(0);
                 }
-            }
-            if (gamepad1.b == true){
-                if(RightGrab.getPosition() == 0.1){
-                    LeftGrab.setPosition(0.4);
-                    RightGrab.setPosition(0.35);
-                    sleep(300);
-                }
-                else{
-                    RightGrab.setPosition(0.8);
-                    LeftGrab.setPosition(0.9);
-                    sleep(300);
-                }
-            }
+
 
 
 

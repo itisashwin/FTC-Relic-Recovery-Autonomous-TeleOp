@@ -5,6 +5,7 @@ import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple.Direction;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
@@ -26,18 +27,23 @@ public class TurningTest extends LinearOpMode{
 
     private BNO055IMU imu;
 
-    public void gyroturn(double angle, double power){
+    public void gyroturn(double angle, double power, double k){
 
         Orientation angles   = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
         double initval = angles.firstAngle;
 
         if (angle > 0) {
-            while((angles.firstAngle - initval) < angle){
+            while((-angles.firstAngle - initval) < angle){
 
-                Motor1.setPower(power);
-                Motor2.setPower(-power);
-                Motor3.setPower(power);
-                Motor4.setPower(-power);
+                double wtf =power*(1-(-angles.firstAngle/(k*angle)));
+                telemetry.addData("meme", (angles.firstAngle - initval) );
+                telemetry.addData("leg", wtf);
+                telemetry.update();
+
+                Motor1.setPower(wtf);
+                Motor2.setPower(-wtf);
+                Motor3.setPower(-wtf);
+                Motor4.setPower(-wtf);
                 angles   = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
 
             }
@@ -50,10 +56,10 @@ public class TurningTest extends LinearOpMode{
         else{
             while((angles.firstAngle - initval) > angle){
 
-                Motor1.setPower(power);
-                Motor2.setPower(-power);
-                Motor3.setPower(power);
-                Motor4.setPower(-power);
+                Motor1.setPower(-power*(1-(angles.firstAngle/(k*angle))));
+                Motor2.setPower(power*(1-(angles.firstAngle/(k*angle))));
+                Motor3.setPower(power*(1-(angles.firstAngle/(k*angle))));
+                Motor4.setPower(power*(1-(angles.firstAngle/(k*angle))));
                 angles   = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
 
             }
@@ -69,7 +75,7 @@ public class TurningTest extends LinearOpMode{
         double currentAngle = angles.firstAngle;
         double power = 0.5;
         if (currentAngle > pastAngle) {
-            while((currentAngle - pastAngle) > 0){
+            while((currentAngle - pastAngle) < 0){
 
                 Motor1.setPower(power);
                 Motor2.setPower(-power);
@@ -124,21 +130,25 @@ public class TurningTest extends LinearOpMode{
             Motor2 = hardwareMap.dcMotor.get("Motor2");
             Motor3 = hardwareMap.dcMotor.get("Motor3");
             Motor4 = hardwareMap.dcMotor.get("Motor4");
+            Motor1.setDirection(Direction.REVERSE);
             waitForStart();
+            while (opModeIsActive()) {
+                double meme = imu.getAngularOrientation().firstAngle;
+//            Motor1.setPower(-0.48);
+//            Motor2.setPower(-0.48);
+//            Motor3.setPower(-0.48);
+//            Motor4.setPower(0.48);
+//            sleep(1500);
+//            Motor1.setPower(0);
+//            Motor2.setPower(0);
+//            Motor3.setPower(0);
+//            Motor4.setPower(0);
+                //gyroAlign(meme);
+                gyroturn(90, 0.6, 1.265);
+                stop();
 
-            double meme = imu.getAngularOrientation().firstAngle;
-            Motor1.setPower(-0.48);
-            Motor2.setPower(-0.48);
-            Motor3.setPower(-0.48);
-            Motor4.setPower(0.48);
-            sleep(1500);
-            Motor1.setPower(0);
-            Motor2.setPower(0);
-            Motor3.setPower(0);
-            Motor4.setPower(0);
-            //gyroAlign(meme);
-            gyroturn(90, 0.48);
 
+            }
 
         }
     }
